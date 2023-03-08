@@ -41,55 +41,65 @@ const analyze = (source) => {
 
     switch (finalState) {
       case 6.1:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'plus',
         });
         break;
       case 6.2:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'minus',
         });
         break;
       case 6.3:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'times',
         });
         break;
       case 6.4:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'div',
         });
         break;
       case 6.5:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'lParen',
         });
         break;
       case 6.6:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'rParen',
         });
         break;
       case 6.7:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'keyword',
         });
         break;
       case 6.8:
-        symbolsTable.append({
+        symbolsTable.push({
           lexeme,
           token: 'identifier',
         });
         break;
+      case 6.8:
+        symbolsTable.push({
+          lexeme,
+          token: 'number',
+        });
+        break;
     }
   };
+
+  function displayError() {
+    console.error(`ERROR: unexpected char ${char} at ${pos}`);
+  }
 
   for (let pos = 0; pos < source.length; pos++) {
     char = source.charAt(pos);
@@ -109,26 +119,39 @@ const analyze = (source) => {
         else if (char === '(') terminate(6.5);
         else if (char === ')') terminate(6.6);
         else if (blanks.includes(char)) continue;
-        else console.error(`ERROR: unexpected char ${char} at ${pos}`);
+        else displayError();
         break;
       case 1:
         if (char === 'e') advanceTo(2);
         else if (char.match(/a-zA-Z0-9/)) advanceTo(5);
-        else console.error(`ERROR: unexpected char ${char} at ${pos}`);
+        else displayError();
         break;
       case 2:
         if (char === 'a') advanceTo(3);
         else if (char.match(/a-zA-Z0-9/)) advanceTo(5);
-        else console.error(`ERROR: unexpected char ${char} at ${pos}`);
+        else displayError();
         break;
       case 3:
         if (char === 'd') advanceTo(4);
         else if (char.match(/a-zA-Z0-9/)) advanceTo(5);
-        else console.error(`ERROR: unexpected char ${char} at ${pos}`);
+        else displayError();
         break;
       case 4:
         if (char.match(/a-zA-Z0-9/)) advanceTo(5);
-        else console.error(`ERROR: unexpected char ${char} at ${pos}`);
+        else displayError();
+        break;
+      case 13:
+        if (char.match(/0-9/)) advanceTo(13);
+        else if (char === '.') advanceTo(14);
+        else displayError();
+        break;
+      case 14:
+        if (char.match(/a-zA-Z0-9/)) advanceTo(5);
+        else displayError();
+        break;
+      case 15:
+        if (char.match(/a-zA-Z0-9/)) advanceTo(5);
+        else displayError();
         break;
     }
   }
